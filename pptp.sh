@@ -19,6 +19,29 @@ start(){
     route -n
 }
 
+start(){
+    list
+    echo -n 'Please choose:'
+    read TARGET
+    
+    autopon $TARGET
+        
+    callnum=`ps -aux |grep 'pppd call' | grep -v grep | wc -l`
+    if [ $callnum -eq 0 ]; then
+        echo '>>> Failed to start PPTP!'
+        exit 1
+    fi
+    echo 'Setting DNS...'
+    cp /etc/resolv.conf /etc/_resolv.conf
+    echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+    echo 'Finish DNS setting...'
+    echo 'Setting PPTP route...'
+    ip route del default
+    ip route add default dev ppp0
+    echo 'Finish, current route table:'
+    route -n
+}
+
 list(){
     echo '==== Available Hosts ===='
     ls -l /etc/ppp/peers | egrep -v "ppp|pppoatm|pppoe|pppoe-rp|pptp|total" | awk '{print $9}'
@@ -29,7 +52,7 @@ stop(){
     echo 'Stopping PPTP...'
     poff `ps -aux |grep 'pppd call' | grep -v grep | awk '{print $13}'`
     echo 'Resume DNS...'
-    mv /etc/_resolv.conf /etc/resolv.conf
+    cp /etc/_resolv.conf /etc/resolv.conf
     echo 'Finish resuming DNS...'
     echo 'Setting default route...'
     ip route del default

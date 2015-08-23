@@ -1,14 +1,14 @@
 #!/bin/bash
 # Example: autopon PPTPSERVER
 
-
+DIR=`dirname $0`
 TARGET=$1
 SUCCESS_STRING=^"remote IP address "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$
 FAIL_STRING="status = 0x0"
 CONNECT_STRING="Connect: ppp0"
 ATTEMPT=5 # Attempt limits
 TMOUT=20 # Timeout threshold
-LOG='/mnt/NETSTORAGE/scripts/PPTP/autopon.session'
+LOG=$DIR'/autopon.session'
 
 while [[ $ATTEMPT > 0 ]]; do
     export LOOP_PID=$$
