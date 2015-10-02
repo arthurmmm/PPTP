@@ -1,22 +1,34 @@
 #!/bin/bash
 
-start(){
-    callnum=`ps -aux |grep 'pppd call' | grep -v grep | wc -l`
-    if [ $callnum -eq 0 ]; then
-        echo 'PPTP is not running!'
-        echo 'Please use "pon <Host name>" to start PPTP then run this script to setup route table.'
-        echo 'Use "pptp.sh list" to get all available host'
-        exit 1
-    fi
-    echo 'Setting DNS...'
-    mv /etc/resolv.conf /etc/_resolv.conf
-    echo 'nameserver 8.8.8.8' > /etc/resolv.conf
-    echo 'Finish DNS setting...'
-    echo 'Setting PPTP route...'
-    ip route del default
-    ip route add default dev ppp0
-    echo 'Finish, current route table:'
-    route -n
+#start(){
+#    callnum=`ps -aux |grep 'pppd call' | grep -v grep | wc -l`
+#    if [ $callnum -eq 0 ]; then
+#        echo 'PPTP is not running!'
+#        echo 'Please use "pon <Host name>" to start PPTP then run this script to setup route table.'
+#        echo 'Use "pptp.sh list" to get all available host'
+#        exit 1
+#    fi
+#    echo 'Setting DNS...'
+#    mv /etc/resolv.conf /etc/_resolv.conf
+#    echo 'nameserver 8.8.8.8' > /etc/resolv.conf
+#    echo 'Finish DNS setting...'
+#    echo 'Setting PPTP route...'
+#    ip route del default
+#    ip route add default dev ppp0
+#    echo 'Finish, current route table:'
+#    route -n
+#}
+
+create(){
+    echo -n 'Name:'
+    read NAME
+    echo -n 'Server IP:'
+    read SERVER
+    echo -n 'Username:'
+    read USER
+    echo -n 'password:'
+    read PASSWORD
+    pptpsetup --create $NAME --server $SERVER --username $USER --password $PASSWORD --encrypt
 }
 
 start(){
@@ -62,6 +74,9 @@ stop(){
 }
 
 case $1 in 
+    create)
+        create
+        ;;
     start)
         start
         ;;
